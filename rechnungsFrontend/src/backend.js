@@ -1,0 +1,48 @@
+import fetch from "node-fetch";
+
+const prompt = `Extrahiere aus folgendem Text die relevanten Informationen und gebe sie exakt im folgenden JSON-Format zurück:
+
+{
+    "gesamtBetrag": 0,
+    "Austeller": "Ich",
+    "Rechnungsnummer": 0,
+    "UIS-Nummer": 0
+}
+
+Regeln für die Extraktion:
+
+- **gesamtBetrag**: Die höchste Zahl mit "€", "EUR" oder ähnlicher Währungsangabe. Falls mehrere Beträge existieren, wähle den größten.
+
+- **Austeller**: Der Name des Rechnungsstellers. Oft ist dies eine Firma oder eine Person mit Vor- und Nachname (z. B. "Max Mustermann GmbH").
+
+- **Rechnungsnummer**: Eine Zahlen- oder alphanumerische Folge, die oft mit "Rechnung", "Rechnungsnummer" oder "Beleg-Nr." beginnt.
+
+- **UIS-Nummer**: Auch bekannt als Umsatzsteuer-Identifikationsnummer (UID, USt-IdNr.). Sie beginnt meist mit einem Ländercode (z. B. "DE", "AT", "CH"), gefolgt von Zahlen.
+
+Wichtige Hinweise:
+
+- Falls eine Information fehlt, lasse den Wert auf null und entferne keine Felder.
+
+>>> Gib nur das JSON zurück, ohne zusätzliche Erklärungen oder Texte.
+
+Hier ist der extrahierte Rechnungstext:
+
+{invoice_text}
+`;
+
+export async function askMistralLLM(text) {
+  const response = await fetch("http://localhost:11434/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "mistral",
+      prompt: prompt.replace("{invoice_text}", text),
+      options: {
+        temperature: 0.1,
+      },
+    }),
+  });
+
+  const data = await response.json();
+  return data.response;
+}

@@ -1,0 +1,78 @@
+{
+  "name": "vuedesktopapp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:start": "electron .",
+    "electron:build": "electron-builder"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.14",
+    "compromise": "^14.14.4",
+    "pdf-to-png-converter": "^3.6.5",
+    "pdf2pic": "^3.1.4",
+    "pdfjs-dist": "^5.0.375",
+    "tailwindcss": "^4.0.14",
+    "tesseract.js": "^6.0.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "electron": "^35.0.1",
+    "electron-builder": "^25.1.8",
+    "vite": "^6.2.1",
+    "vite-plugin-static-copy": "^2.3.0",
+    "vite-plugin-vue-devtools": "^7.7.2"
+  },
+  "build": {
+    "appId": "com.boonsei.vueDesktopApp",
+    "productName": "VueDesktopApp",
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build"
+    },
+    "files": [
+      "dist/**",
+      "main.js",
+      "preload.js",
+      "node_modules/pdfjs-dist/build/pdf.worker.min.mjs"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/pdfjs-dist/build/pdf.worker.min.mjs",
+        "to": "pdf.worker.min.mjs"
+      }
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "nsis": {
+      "perMachine": false
+    },
+    "npmRebuild": false,
+    "extraFiles": [
+      "dist/**",
+      "main.js",
+      "preload.js"
+    ]
+  }
+}
