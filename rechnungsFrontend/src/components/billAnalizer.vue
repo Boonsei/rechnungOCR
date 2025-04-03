@@ -4,7 +4,6 @@ import Tesseract from "tesseract.js";
 import * as pdfjsLib from "pdfjs-dist";
 import nlp from "compromise";
 import { parseNumber } from "@/helperFunctions/functions.js";
-import { askMistralLLM } from "../backend";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
     "./node_modules/pdfjs-dist/build/pdf.worker.min.mjs";
@@ -22,12 +21,11 @@ const foundData = ref({
 const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-        const { textArray, textForLLM } = await extractTextFromImage(file);
+        const textForLLM = await extractTextFromImage(file);
 
-        const aiResponse = await askMistralLLM(textForLLM);
-        console.log(aiResponse);
-        /*
-        const gesamtBetrag = getGesamtBetrag(textArray);
+        console.log(textForLLM);
+
+        /* const gesamtBetrag = getGesamtBetrag(textArray);
         foundData.value.gesamtBetrag = gesamtBetrag.maxNumb;
         console.log("maxNumb: ", gesamtBetrag.maxNumb);
         console.log("Options: ", gesamtBetrag.options);*/
@@ -68,9 +66,10 @@ const extractTextFromImage = async (file) => {
                 .join("\n")
                 .replace(/(\. )/g, "### ");
 
-            textForLLM = formattedText;
-            //console.log("mapped Array for nlp: ", formattedText);
+            textForLLM += "\n";
+            textForLLM += formattedText;
 
+            /*
             const doc = nlp(
                 finalArr
                     .map((line) => line.join(" "))
@@ -78,13 +77,11 @@ const extractTextFromImage = async (file) => {
                     .replace(/(\. )/g, "### "),
             );
 
-            doc.document.forEach((nlpLine) => textArray.push(nlpLine));
+            doc.document.forEach((nlpLine) => textArray.push(nlpLine));*/
         }
-
-        return textArray;
+        return textForLLM;
     }
 
-    //img is not pdf
     await Tesseract.recognize(file, "deu", {
         //logger: (m) => console.log(m) // Optional: Logge den Fortschritt (optional)
     })
@@ -101,8 +98,7 @@ const extractTextFromImage = async (file) => {
             //console.error("Fehler bei der Texterkennung:", error);
             loading.value = false;
         });
-
-    return { textArray, textForLLM };
+    return textForLLM;
 };
 
 // Funktion um gesamtbetrag zu filtern

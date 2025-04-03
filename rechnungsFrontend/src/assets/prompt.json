@@ -1,6 +1,4 @@
-import fetch from "node-fetch";
-
-const prompt = `Extrahiere aus folgendem Text die relevanten Informationen und gebe sie exakt im folgenden JSON-Format zurück:
+{ "prompt": "Extrahiere aus folgendem Text die relevanten Informationen und gebe sie exakt im folgenden JSON-Format zurück:
 
 {
     "gesamtBetrag": 0,
@@ -27,22 +25,4 @@ Wichtige Hinweise:
 
 Hier ist der extrahierte Rechnungstext:
 
-{invoice_text}
-`;
-
-export async function askMistralLLM(text) {
-  const response = await fetch("http://localhost:11434/api/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "mistral",
-      prompt: prompt.replace("{invoice_text}", text),
-      options: {
-        temperature: 0.1,
-      },
-    }),
-  });
-
-  const data = await response.json();
-  return data.response;
-}
+{invoice_text}"}
