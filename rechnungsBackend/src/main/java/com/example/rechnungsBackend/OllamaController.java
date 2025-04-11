@@ -27,4 +27,9 @@ public class OllamaController {
         return ollamaClient.generateResponse(request);
     }
 
+    @GetMapping
+    public String fetch(){
+        return "Fetch is working";
+    }
+
 }
